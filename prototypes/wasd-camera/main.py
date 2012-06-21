@@ -1,5 +1,8 @@
 import direct.directbase.DirectStart
 from direct.showbase.DirectObject import DirectObject
+from pandac.PandaModules import * 
+from MouseControls import * 
+from direct.task import Task 
 
 
 
@@ -13,7 +16,6 @@ stage.reparentTo(render)
 
 # disable the default mouse-controls for the camera
 base.disableMouse()
-
 
 
 ###############
@@ -45,7 +47,51 @@ class wasdControl(DirectObject):
 		
 wasd_control = wasdControl()
 
+############################
+#     mouselook class      #
+############################
 
+class hlview(DirectObject): 
+
+    def __init__(self): 
+        self.m=MouseControls() 
+        base.enableMouse() 
+        
+    def start(self): 
+        self.m.startMouse() 
+        base.disableMouse() 
+        par=camera.getParent() 
+        self.parent=par 
+        #Our base node that only holds position 
+        self.posNode=par.attachNewNode("PosNode") 
+        self.posNode.setPos(camera.getPos(par)) 
+
+        #Orient the camera on the posNode 
+        camera.setPos(0,0,0) 
+        camera.reparentTo(self.posNode) 
+        
+        #Task for changing direction/position 
+        taskMgr.add(self.camTask, "hlview::camTask")           
+    
+    def camTask(self,task): 
+        #position change 
+        finalMove=Vec3(0,0,0) 
+        basePosition=self.posNode.getPos(self.parent) 
+        self.posNode.setPos(self.posNode.getPos()+finalMove) 
+        x=-self.m.mouseChangeX*.2 
+        y=-self.m.mouseChangeY*.1 
+        #orientation change 
+        camera.setH(camera.getH()+x) 
+        camera.setP(camera.getP()+y) 
+        return Task.cont 
+		
+############################
+#  object of class hlview  #
+############################
+  
+import hlview 
+mouseControl=hlview.hlview() 
+mouseControl.start() 
 
 ####################
 # runs the program #

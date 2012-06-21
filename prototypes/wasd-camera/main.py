@@ -1,7 +1,6 @@
+from pandac.PandaModules import * 
 import direct.directbase.DirectStart
 from direct.showbase.DirectObject import DirectObject
-from pandac.PandaModules import * 
-from MouseControls import * 
 from direct.task import Task 
 
 
@@ -18,9 +17,9 @@ stage.reparentTo(render)
 base.disableMouse()
 
 
-###############
-# actual code #
-###############
+#################
+# WASD movement #
+#################
 
 class wasdControl(DirectObject):
 	
@@ -45,53 +44,90 @@ class wasdControl(DirectObject):
 	def squidward(self, dt):
 		print "It's 'Mr. Tentacles' for you!"
 		
-wasd_control = wasdControl()
+
 
 ############################
 #     mouselook class      #
 ############################
+class mouselook(DirectObject):
 
-class hlview(DirectObject): 
+	def __init__(self, camera):
+		self.camera  = camera 
+		self.running = False 
+		self.time    = 0 
+		self.centX   = base.win.getProperties().getXSize()/2 
+		self.centY   = base.win.getProperties().getYSize()/2 
 
-    def __init__(self): 
-        self.m=MouseControls() 
-        base.enableMouse() 
-        
-    def start(self): 
-        self.m.startMouse() 
-        base.disableMouse() 
-        par=camera.getParent() 
-        self.parent=par 
-        #Our base node that only holds position 
-        self.posNode=par.attachNewNode("PosNode") 
-        self.posNode.setPos(camera.getPos(par)) 
+		# key controls 
+		self.forward   = False 
+		self.backward  = False 
+		self.left      = False 
+		self.right     = False 
+		self.up        = False 
+		self.down      = False 
+		self.up        = False 
+		self.down      = False 
+		self.rollLeft  = False 
+		self.rollRight = False 
 
-        #Orient the camera on the posNode 
-        camera.setPos(0,0,0) 
-        camera.reparentTo(self.posNode) 
-        
-        #Task for changing direction/position 
-        taskMgr.add(self.camTask, "hlview::camTask")           
-    
-    def camTask(self,task): 
-        #position change 
-        finalMove=Vec3(0,0,0) 
-        basePosition=self.posNode.getPos(self.parent) 
-        self.posNode.setPos(self.posNode.getPos()+finalMove) 
-        x=-self.m.mouseChangeX*.2 
-        y=-self.m.mouseChangeY*.1 
-        #orientation change 
-        camera.setH(camera.getH()+x) 
-        camera.setP(camera.getP()+y) 
-        return Task.cont 
+		# sensitivity settings 
+		self.movSens  = 2 
+		self.rollSens = 50 
+		self.sensX = self.sensY = 0.2          
+
+	# camera rotation task 
+	def cameraTask(task): 
+		dt = task.time - self.time 
+
+		# handle mouse look 
+		md = base.win.getPointer(0)        
+		x = md.getX() 
+		y = md.getY() 
+
+		if base.win.movePointer(0, self.centX, self.centY):    
+			self.camera.setH(self.camera,self.camera.getH(self.camera) - (x - self.centX) * self.sensX) 
+			self.camera.setP(self.camera,self.camera.getP(self.camera) - (y - self.centY) * self.sensY)       
+
+		# handle keys: 
+
+		if self.forward == True: 
+			self.camera.setY(self.camera, self.camera.getY(self.camera) + self.movSens*dt) 
+		if self.backward == True: 
+			self.camera.setY(self.camera, self.camera.getY(self.camera) - self.movSens*dt) 
+		if self.left == True: 
+			self.camera.setX(self.camera, self.camera.getX(self.camera) - self.movSens*dt) 
+		if self.right == True: 
+			self.camera.setX(self.camera, self.camera.getX(self.camera) + self.movSens*dt) 
+		if self.up == True: 
+			self.camera.setZ(self.camera, self.camera.getZ(self.camera) + self.movSens*dt) 
+		if self.down == True: 
+			self.camera.setZ(self.camera, self.camera.getZ(self.camera) - self.movSens*dt)           
+		if self.rollLeft == True: 
+			self.camera.setR(self.camera, self.camera.getR(self.camera) - self.rollSens*dt) 
+		if self.rollRight == True: 
+			self.camera.setR(self.camera, self.camera.getR(self.camera) + self.rollSens*dt) 
+
+		self.time = task.time       
+		return task.cont 
+
+	def start(self):   
+		base.disableMouse() 
+		# hide mouse cursor, comment these 3 lines to see the cursor 
+		props = WindowProperties() 
+		props.setCursorHidden(True) 
+		base.win.requestProperties(props) 
+		# reset mouse to start position: 
+		base.win.movePointer(0, self.centX, self.centY)             
+		taskMgr.add(self.cameraTask, 'HxMouseLook::cameraTask') 
+
 		
-############################
-#  object of class hlview  #
-############################
-  
-import hlview 
-mouseControl=hlview.hlview() 
-mouseControl.start() 
+#######################################
+#  objects of class mouselook & WASD  #
+#######################################
+
+mouse_look = mouselook()
+mouse_look.start()
+wasd_control = wasdControl()
 
 ####################
 # runs the program #

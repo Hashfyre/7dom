@@ -21,10 +21,10 @@ base.disableMouse()
 ############################
 #     mouselook class      #
 ############################
-class mouselook(DirectObject):
+class Mouselook(DirectObject):
 
 	def __init__(self, camera):
-		self.camera  = camera 
+		self.camera  = camera
 		self.running = False 
 		self.time    = 0 
 		self.centX   = base.win.getProperties().getXSize()/2 
@@ -97,7 +97,7 @@ class mouselook(DirectObject):
 #  objects of class mouselook & WASD  #
 #######################################
 
-mouse_look = mouselook()
+mouse_look = Mouselook(camera)
 
 ####################
 # runs the program #

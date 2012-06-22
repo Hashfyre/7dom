@@ -49,9 +49,11 @@ class Mouselook(DirectObject):
 		self.rollRight = False 
 
 		# sensitivity settings 
-		self.movSens  = 2 
-		self.rollSens = 50 
-		self.sensX = self.sensY = 0.2 
+		#prev val 2
+		self.movSens  = 0.1
+		#prev val 50
+		self.rollSens = 0 
+		self.sensX = self.sensY = 0.1 
 		
 		print "okay"         
 		taskMgr.add(self.cameraTask, 'cameraTask') 
@@ -71,22 +73,22 @@ class Mouselook(DirectObject):
 
 		# handle keys: 
 
-		if self.forward == True: 
-			self.camera.setY(self.camera, self.camera.getY(self.camera) + self.movSens*dt) 
-		if self.backward == True: 
-			self.camera.setY(self.camera, self.camera.getY(self.camera) - self.movSens*dt) 
-		if self.left == True: 
-			self.camera.setX(self.camera, self.camera.getX(self.camera) - self.movSens*dt) 
-		if self.right == True: 
-			self.camera.setX(self.camera, self.camera.getX(self.camera) + self.movSens*dt) 
-		if self.up == True: 
-			self.camera.setZ(self.camera, self.camera.getZ(self.camera) + self.movSens*dt) 
-		if self.down == True: 
-			self.camera.setZ(self.camera, self.camera.getZ(self.camera) - self.movSens*dt)           
-		if self.rollLeft == True: 
-			self.camera.setR(self.camera, self.camera.getR(self.camera) - self.rollSens*dt) 
-		if self.rollRight == True: 
-			self.camera.setR(self.camera, self.camera.getR(self.camera) + self.rollSens*dt) 
+		#if self.forward == True: 
+		#	self.camera.setY(self.camera, self.camera.getY(self.camera) + self.movSens*dt) 
+		#if self.backward == True: 
+		#	self.camera.setY(self.camera, self.camera.getY(self.camera) - self.movSens*dt) 
+		#if self.left == True: 
+		#	self.camera.setX(self.camera, self.camera.getX(self.camera) - self.movSens*dt) 
+		#if self.right == True: 
+		#	self.camera.setX(self.camera, self.camera.getX(self.camera) + self.movSens*dt) 
+		#if self.up == True: 
+		#	self.camera.setZ(self.camera, self.camera.getZ(self.camera) + self.movSens*dt) 
+		#if self.down == True: 
+		#	self.camera.setZ(self.camera, self.camera.getZ(self.camera) - self.movSens*dt)           
+		#if self.rollLeft == True: 
+		#	self.camera.setR(self.camera, self.camera.getR(self.camera) - self.rollSens*dt) 
+		#if self.rollRight == True: 
+		#	self.camera.setR(self.camera, self.camera.getR(self.camera) + self.rollSens*dt) 
 
 		self.time = task.time       
 		return task.cont 
@@ -107,6 +109,7 @@ class Mouselook(DirectObject):
 #######################################
 
 mouse_look = Mouselook(camera)
+mouse_look.start()
 
 ####################
 # runs the program #

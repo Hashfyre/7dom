@@ -1,0 +1,1 @@
+ppython.exe main.py

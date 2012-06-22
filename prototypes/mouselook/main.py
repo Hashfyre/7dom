@@ -45,16 +45,19 @@ class Mouselook(DirectObject):
 		# sensitivity settings 
 		self.movSens  = 2 
 		self.rollSens = 50 
-		self.sensX = self.sensY = 0.2          
+		self.sensX = self.sensY = 0.2 
+		
+		print "okay"         
+		taskMgr.add(self.cameraTask, 'cameraTask') 
 
 	# camera rotation task 
-	def cameraTask(task): 
+	def cameraTask(self, task): 
 		dt = task.time - self.time 
 
 		# handle mouse look 
 		md = base.win.getPointer(0)        
 		x = md.getX() 
-		y = md.getY() 
+		y = md.getY()
 
 		if base.win.movePointer(0, self.centX, self.centY):    
 			self.camera.setH(self.camera,self.camera.getH(self.camera) - (x - self.centX) * self.sensX) 

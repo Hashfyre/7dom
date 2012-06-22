@@ -67,9 +67,9 @@ class Mouselook(DirectObject):
 		x = md.getX() 
 		y = md.getY()
 
-		if base.win.movePointer(0, self.centX, self.centY):    
-			self.camera.setH(self.camera,self.camera.getH(self.camera) - (x - self.centX) * self.sensX) 
-			self.camera.setP(self.camera,self.camera.getP(self.camera) - (y - self.centY) * self.sensY)       
+		if base.win.movePointer(0, self.centX, self.centY):
+			self.camera.setH(base.render, self.camera.getH(base.render) - (x - self.centX) * self.sensX) 
+			self.camera.setP(base.render, self.camera.getP(base.render) - (y - self.centY) * self.sensY)       
 
 		# handle keys: 
 

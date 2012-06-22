@@ -16,6 +16,12 @@ stage.reparentTo(render)
 # disable the default mouse-controls for the camera
 base.disableMouse()
 
+# lets us quit with the escape key instead of the mouse (alt+f4 works too, of course)
+base.accept("escape", quit) 
+def quit():
+    sys.exit
+    print "should have quited" 
+
 
 
 ############################

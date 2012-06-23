@@ -157,11 +157,25 @@ def walk():
 base.accept('s-repeat', walk)
 base.accept('s', walk)
 
+# forward: a
+def walk():
+	node.setLinearMovement(Vec3(-1, 0, 0), True)
+base.accept('a-repeat', walk)
+base.accept('a', walk)
+
+# forward: d
+def walk():
+	node.setLinearMovement(Vec3(1, 0, 0), True)
+base.accept('d-repeat', walk)
+base.accept('d', walk)
+
 # stop
 def stop():
 	node.setLinearMovement(Vec3(0, 0, 0), True)
 base.accept('w-up', stop)
 base.accept('s-up', stop)
+base.accept('a-up', stop)
+base.accept('d-up', stop)
 
 
 

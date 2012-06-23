@@ -145,16 +145,23 @@ def jump():
 	node.doJump()
 base.accept('space', jump)
 
-# horse-headed movement: w
-
+# forward: w
 def walk():
 	node.setLinearMovement(Vec3(0, 1, 0), True)
 base.accept('w-repeat', walk)
 base.accept('w', walk)
 
+# backward: s
+def walk():
+	node.setLinearMovement(Vec3(0, -1, 0), True)
+base.accept('s-repeat', walk)
+base.accept('s', walk)
+
+# stop
 def stop():
 	node.setLinearMovement(Vec3(0, 0, 0), True)
 base.accept('w-up', stop)
+base.accept('s-up', stop)
 
 
 

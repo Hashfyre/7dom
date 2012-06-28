@@ -11,6 +11,8 @@ from panda3d.bullet import BulletBoxShape
 
 from panda3d.bullet import BulletCharacterControllerNode
 
+from kcc import PandaBulletCharacterController
+
 
 
 ################
@@ -23,6 +25,10 @@ from panda3d.bullet import BulletCharacterControllerNode
 
 # disable the default mouse-controls for the camera
 #base.disableMouse()
+
+# focus the camera where the action's at
+base.cam.setPos(0, -10, 0)
+base.cam.lookAt(0, 0, 0)
 
 
 
@@ -116,44 +122,27 @@ world.attachRigidBody(node)
 # character #
 #############
 
-"""Bullet character controllers are a special Body.
+"""This uses peterpodgorski's kcc. Refer to the source, it's nicely documented."""
 
-It behaves as one expect an FPS character to behave: does not bounce, 
-is always upright, and is controlled via velocity, not forces.
-
-It still uses a Shape, but has other ways of assigning physical properties.
-
-It seems to a bit incomplete: I moved the ground, and it didn't fall with it.
-It also reacts strangely to the prop box. But I think that might be my fault...
-Most people seem to be making their own CCs. But I think we don't need to yet."""
-
-# shape
-shape = BulletBoxShape(Vec3(0.5, 0.5, 0.5))
-
-# bullect character object
-node = BulletCharacterControllerNode (shape, 1)
- 
-# attach to the nodetree via a parent, for easier access which isn't really done
-np = render.attachNewNode(node)
-np.setPos(0, 0, 2)
-#np.setR(10)
- 
-# attach to the Bullet world, as a character, note
-world.attach_character(node)
+# the controller takes care of all the internal things
+node = PandaBulletCharacterController(world, worldNP, 1.75, 1.3, 0.5, 0.4)
 
 # This isn't necessary anymore due to debug
 ## make it visible																#BUG: this model too did not match the actual shape, be careful next time
 #model = loader.loadModel('models/box.egg')
 #model.flattenLight()
-#model.reparentTo(np)
+#model.reparentTo(node.movementParent)	# currently, the easiest way to parent a visible model is to use the movementParent
 
-# focus the camera at it
-base.cam.setPos(0, -10, 0)
-base.cam.lookAt(0, 0, 0)
+# task to update the character, this is needed for now
+def c_update(task):
+	dt = globalClock.getDt()
+	node.update()
+	return task.cont
+taskMgr.add(c_update, 'c_updateWorld')
 
 # punks jump up: space
 def jump():
-	node.doJump()
+	node.startJump()
 base.accept('space', jump)
 
 # forward: w
@@ -187,6 +176,8 @@ base.accept('w-up', stop)
 base.accept('s-up', stop)
 base.accept('a-up', stop)
 base.accept('d-up', stop)
+
+
 
 
 

@@ -1,0 +1,32 @@
+Entity:
+	
+	state
+	
+	model
+	
+	body
+	shape
+
+	np *body
+
+	lin_v : in case of dumb entities, this'll always be a scalar over the y axis, or at least over the xy plane
+	lin_v_limit	: limit on the magnitude of lin_v, to be exact
+	
+	ang_v : almost exclusively H
+	ang_v_limit : also of the magnitude
+	
+	update() : sets ang and lin velocities to body, and maybe do other things based on state
+	
+Mob <- Entity:
+
+	move_randomly() : does whatever to lin/ang velocity, or whatever the idle behavior asks for, really
+	
+	move_to_location() : does it's very dogged best to move towards a location by changing the velocities
+	
+Player <- Entity:
+
+	camera : parented to body
+
+	look_mouse() : rotates the body, and therefor changes ang_v, but also rotates the camera R
+	
+	move_key() : lin_v can also be on +-x for strafing, will use states to decide which direction to move

@@ -2,7 +2,7 @@ Entity:
 	
 	state
 	
-	model
+	actor
 	
 	body
 	shape

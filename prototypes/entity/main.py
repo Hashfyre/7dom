@@ -8,9 +8,9 @@ class Entity(DirectObject):
 		"""Creates a generic Entity with a physical component.
 
 		Keyword arguments:
-		world -- a panda3d.bullet.BulletWorld object to add the Entity's physical body to
+		world -- a BulletWorld object to add the Entity's physical body to
 		parent -- the Node under which the Entity's physical body will be added
-		shape -- a panda3d.bullet.BulletShape object for the Entity's physical body (default BulletCapsuleShape(0.5, 1))
+		shape -- a BulletShape object for the Entity's physical body (default BulletCapsuleShape(0.5, 1))
 		pos -- a three-tuple for the position of the Entity with respect of its parent (default (0, 0, 2))
 		"""
 		
@@ -32,8 +32,8 @@ class Entity(DirectObject):
 		self.v_angular = Vec3(0, 0, 0)
 		
 		# Limits for the velocities' magnitudes, respectively.
-		self.limit_v_linear = 1
-		self.limit_v_angular = 1
+		self.limit_v_linear = 10
+		self.limit_v_angular = 10
 		
 		## Automates updating the Entity.
 		#taskMgr.add(self.update)
@@ -44,5 +44,35 @@ class Entity(DirectObject):
 		# Applies velocities.
 		self.body.setLinearVelocity(self.v_linear)
 		self.body.setLinearVelocity(self.v_angular)
+		
+	def move(self, v):
+		"""Sets the Entity's linear velocity to the given amount, upto the limit.
+		
+		Keyword arguments:
+		v -- a Vec3 vector
+		"""
+		
+		# If velocity larger than limit, then normalize it.
+		if v.length() <= self.limit_v_linear:
+			v = v / v.length() * self.limit_v_linear
+			
+		# Set velocity.
+		self.v_linear = v
+		
+	def turn(self, v):
+		"""Sets the Entity's angular velocity to the given amount, upto the limit.
+		
+		Keyword arguments:
+		v -- a Vec3 vector
+		"""
+		
+		# If velocity larger than limit, then normalize it.
+		if v.length() <= self.limit_v_angular:
+			v = v / v.length() * self.limit_v_angular
+			
+		# Set velocity.
+		self.v_angular = v
+
+			
 
 

@@ -133,8 +133,8 @@ def main():
 
 	## instances ##
 
-	e = Entity(world, render, taskMgr, pos=(0, 0, 1))
-	e.move(Vec3(0, 5, 0))
+	e = Entity(world, render, taskMgr, pos=(0, -50, 1))
+	e.move(Vec3(0, 10, 0))
 	
 	f = Entity(world, render, taskMgr, pos=(0, 50, 0))
 

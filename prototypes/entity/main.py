@@ -75,6 +75,64 @@ class Entity(DirectObject):
 		# Set velocity.
 		self.v_angular = v
 
-			
+def main():
+	"""A main function to test this code out."""
+
+	## world ##
+
+	# the actual world
+	world = BulletWorld()
+	world.setGravity(Vec3(0, 0, -9.81))
+
+	# a nodepath for attaching things
+	world_np = render.attachNewNode('World')
+
+	# this would render the shapes, I wish I knew of this earlier
+	debug_np = world_np.attachNewNode(BulletDebugNode('Debug'))
+	debug_np.show()
+	world.setDebugNode(debug_np.node())
+
+	# task to update the world
+	def update(task):
+		dt = globalClock.getDt()
+		world.doPhysics(dt)
+		return task.cont
+	taskMgr.add(update, 'update')
 
 
+	## ground ##
+
+	# body
+	node = BulletRigidBodyNode('ground')
+	#node.setMass(1.0)
+
+	shape = BulletPlaneShape(Vec3(0, 0, 1), 1)
+	node.addShape(shape)
+
+	# attach to the nodetree via a parent, for easier access
+	np = render.attachNewNode(node)
+	np.setPos(0, 0, -2)
+
+	# attach to the Bullet world
+	world.attachRigidBody(node)
+
+
+	## instances ##
+
+	e = Entity(world, render)
+
+
+	## camera ##
+
+	base.cam.setPos(0, -10, 0)
+	base.cam.lookAt(0, 0, 0)
+
+
+	## run ##
+
+	run()
+	
+	return 0
+	
+if __name__ == '__main__':
+	main()

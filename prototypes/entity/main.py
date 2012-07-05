@@ -1,5 +1,6 @@
 from pandac.PandaModules import *
 import direct.directbase.DirectStart
+from direct.showbase.DirectObject import DirectObject
 from panda3d.bullet import *
 
 class Entity(DirectObject):
@@ -8,15 +9,16 @@ class Entity(DirectObject):
 		"""Creates a generic Entity with a physical component.
 
 		Keyword arguments:
-		world -- a BulletWorld object to add the Entity's physical body to
-		parent -- the Node under which the Entity's physical body will be added
-		shape -- a BulletShape object for the Entity's physical body (default BulletCapsuleShape(0.5, 1))
-		pos -- a three-tuple for the position of the Entity with respect of its parent (default (0, 0, 2))
+		world 	-- a BulletWorld object to add the Entity's physical body to
+		parent 	-- the Node under which the Entity's physical body will be added
+		shape 	-- a BulletShape object for the Entity's physical body (default BulletCapsuleShape(0.5, 1))
+		pos 	-- a three-tuple for the position of the Entity with respect of its parent (default (0, 0, 2))
 		"""
 		
-		# Creates the body.
+		# Creates the body, sets mass, makes it remain upright, and attaches to world.
 		self.body = BulletRigidBodyNode()
 		self.body.setMass(1.0)
+		self.body.setAngularFactor(Vec3(0, 0, 1))
 		world.attachRigidBody(self.body)
 		
 		# Adds a shape.

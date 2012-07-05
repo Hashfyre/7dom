@@ -20,6 +20,7 @@ class Entity(DirectObject):
 		self.body = BulletRigidBodyNode()
 		self.body.setMass(5.0)
 		self.body.setAngularFactor(Vec3(0, 0, 1))
+		self.body.setCcdMotionThreshold(1)
 		world.attachRigidBody(self.body)
 		
 		# Adds a shape.
@@ -32,6 +33,7 @@ class Entity(DirectObject):
 		
 		# Initializes velocities to move the body with.
 		self.v_linear = Vec3(0, 0, 0)
+		self.prev_v_linear = Vec3(0, 0, 0)
 		self.v_angular = Vec3(0, 0, 0)
 		
 		# Limits for the velocities' magnitudes, respectively.
@@ -49,11 +51,11 @@ class Entity(DirectObject):
 		dt = globalClock.getDt()
 		
 		# Applies velocities.
-		#self.body.setLinearVelocity(self.v_linear)
-		#self.body.setAngularVelocity(self.v_angular)
-		#self.body.applyCentralImpulse(self.v_linear*dt)
-		#self.body.applyCentralImpulse(self.v_angular*dt)
-		#self.body_np.setPos( self.body_np.getPos() + self.v_linear*dt )
+		# Here, this is done by manually moving the body itself, taking in orientation.
+		# This is far from idea, and will always have jitter for fast moving 
+		# object collisions, if it collides at all, as it does not have CCD.
+		self.body_np.setPos( self.body_np.getPos() + self.v_linear*dt )
+		self.body_np.setHpr( self.v_linear.getZ()*dt, self.v_linear.getX()*dt, self.v_linear.getY()*dt )
 		
 		# Perpetuates itself.
 		if task: return task.cont
@@ -66,11 +68,12 @@ class Entity(DirectObject):
 		"""
 		
 		# If velocity larger than limit, then normalize it.
-		if v.length() <= self.limit_v_linear:
+		if v.length() >= self.limit_v_linear:
 			v = v / v.length() * self.limit_v_linear
 			
 		# Set velocity.
 		self.v_linear = v
+		
 		
 	def turn(self, v):
 		"""Sets the Entity's angular velocity to the given amount, upto the limit.
@@ -130,10 +133,10 @@ def main():
 
 	## instances ##
 
-	e = Entity(world, render, taskMgr)
-	e.move(Vec3(0, 0.5, 0))
+	e = Entity(world, render, taskMgr, pos=(0, 0, 1))
+	e.move(Vec3(0, 5, 0))
 	
-	f = Entity(world, render, taskMgr, pos=(0, 2, 0))
+	f = Entity(world, render, taskMgr, pos=(0, 50, 0))
 
 
 	## camera ##

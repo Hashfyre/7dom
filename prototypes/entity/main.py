@@ -40,12 +40,16 @@ class Entity(DirectObject):
 		## Automates updating the Entity.
 		#taskMgr.add(self.update)
 		
-	def update(self):
-		"""Moves the Entity by applying linear and angular velocity to its physical body."""
+	def update(self, task=None):
+		"""Moves the Entity by applying linear and angular velocity to its physical body.
+		This also takes a Task object, for automation."""
 		
 		# Applies velocities.
 		self.body.setLinearVelocity(self.v_linear)
 		self.body.setLinearVelocity(self.v_angular)
+		
+		# Perpetuates itself.
+		if task: return task.cont
 		
 	def move(self, v):
 		"""Sets the Entity's linear velocity to the given amount, upto the limit.
@@ -120,6 +124,8 @@ def main():
 	## instances ##
 
 	e = Entity(world, render)
+	e.move(Vec3(0, 1, 0))
+	taskMgr.add(e.update, 'update')
 
 
 	## camera ##

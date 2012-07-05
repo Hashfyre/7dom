@@ -5,19 +5,20 @@ from panda3d.bullet import *
 
 class Entity(DirectObject):
 	
-	def __init__(self, world, parent, shape=BulletCapsuleShape(0.5, 1), pos=(0, 0, 2)):
+	def __init__(self, world, parent, taskMgr=None, shape=BulletCapsuleShape(0.5, 1), pos=(0, 0, 2)):
 		"""Creates a generic Entity with a physical component.
 
 		Keyword arguments:
 		world 	-- a BulletWorld object to add the Entity's physical body to
 		parent 	-- the Node under which the Entity's physical body will be added
+		taskMgr	-- a TaskMgr which the Entity's update function will be added to. (default None)
 		shape 	-- a BulletShape object for the Entity's physical body (default BulletCapsuleShape(0.5, 1))
 		pos 	-- a three-tuple for the position of the Entity with respect of its parent (default (0, 0, 2))
 		"""
 		
 		# Creates the body, sets mass, makes it remain upright, and attaches to world.
 		self.body = BulletRigidBodyNode()
-		self.body.setMass(1.0)
+		self.body.setMass(5.0)
 		self.body.setAngularFactor(Vec3(0, 0, 1))
 		world.attachRigidBody(self.body)
 		
@@ -26,8 +27,8 @@ class Entity(DirectObject):
 		self.body.addShape(self.shape)
 		
 		# Creates a nodepath and positions the body.
-		self.np = parent.attachNewNode(self.body)
-		self.np.setPos(*pos)
+		self.body_np = parent.attachNewNode(self.body)
+		self.body_np.setPos(*pos)
 		
 		# Initializes velocities to move the body with.
 		self.v_linear = Vec3(0, 0, 0)
@@ -37,16 +38,22 @@ class Entity(DirectObject):
 		self.limit_v_linear = 10
 		self.limit_v_angular = 10
 		
-		## Automates updating the Entity.
-		#taskMgr.add(self.update)
+		# Automates updating the Entity.
+		if taskMgr: taskMgr.add(self.update, "an Entity update")
 		
 	def update(self, task=None):
 		"""Moves the Entity by applying linear and angular velocity to its physical body.
 		This also takes a Task object, for automation."""
 		
+		# Gets the dt.
+		dt = globalClock.getDt()
+		
 		# Applies velocities.
-		self.body.setLinearVelocity(self.v_linear)
-		self.body.setLinearVelocity(self.v_angular)
+		#self.body.setLinearVelocity(self.v_linear)
+		#self.body.setAngularVelocity(self.v_angular)
+		#self.body.applyCentralImpulse(self.v_linear*dt)
+		#self.body.applyCentralImpulse(self.v_angular*dt)
+		#self.body_np.setPos( self.body_np.getPos() + self.v_linear*dt )
 		
 		# Perpetuates itself.
 		if task: return task.cont
@@ -123,14 +130,15 @@ def main():
 
 	## instances ##
 
-	e = Entity(world, render)
-	e.move(Vec3(0, 1, 0))
-	taskMgr.add(e.update, 'update')
+	e = Entity(world, render, taskMgr)
+	e.move(Vec3(0, 0.5, 0))
+	
+	f = Entity(world, render, taskMgr, pos=(0, 2, 0))
 
 
 	## camera ##
 
-	base.cam.setPos(0, -10, 0)
+	base.cam.setPos(0, -20, 50)
 	base.cam.lookAt(0, 0, 0)
 
 
